@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Guia de Estudo: Princípios de Clean Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333333;
+        }
+        h1 {
+            color: #b71c1c;
+            border-bottom: 2px solid #b71c1c;
+            padding-bottom: 10px;
+            font-size: 24px;
+        }
+        h2 {
+            color: #d32f2f;
+            margin-top: 35px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+            font-size: 18px;
+        }
+        h3 {
+            color: #e53935;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+        p, li {
+            font-size: 14px;
+        }
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+        code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+        }
+        .code-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 5px;
+            margin-top: 15px;
+        }
+        .info-box {
+            background-color: #ffebee;
+            border-left: 4px solid #d32f2f;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 5px 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>☕ Guia de Estudo: Princípios de Clean Code (Código Limpo)</h1>
+    <p>Este documento reúne as principais regras conceituais e práticas de <strong>Clean Code</strong>, baseadas na literatura de engenharia de software de Robert C. Martin. Ele serve como material didático e conteúdo de referência para codificação profissional em Java.</p>
+
+    <div class="info-box">
+        <strong>Nota de Utilização:</strong> Este arquivo HTML foi configurado para ser aberto no <strong>Microsoft Word</strong> (clique com o botão direito -> <em>Abrir com</em> -> <em>Microsoft Word</em>) e convertido instantaneamente em um documento formatado para estudo e impressão.
+    </div>
+
+    <h2>1. Nomes Significativos</h2>
+    <p>Nomes de variáveis, métodos e classes devem revelar sua intenção sem a necessidade de comentários secundários.</p>
+    
+    <ul>
+        <li><strong>Use nomes pronunciáveis e fáceis de buscar:</strong> Evite abreviações e letras isoladas (com exceção de contadores simples em laços de repetição).</li>
+        <li><strong>Nomes de classes:</strong> Devem ser substantivos ou frases com substantivos (ex: <code>Usuario</code>, <code>ProcessadorPedido</code>), nunca verbos.</li>
+        <li><strong>Nomes de métodos:</strong> Devem conter verbos ou frases verbais (ex: <code>calcularDesconto()</code>, <code>salvar()</code>).</li>
+    </ul>
+
+    <div class="code-title">Exemplo Comparativo:</div>
+    <pre>
+// Incorreto (Sem significado claro):
+int d; // dias decorridos
+int f; // flag de status
+public void proc() { /* ... */ }
+
+// Correto (Autodocumentado):
+int diasDecorridos;
+int statusDoCadastro;
+public void processarPedido() { /* ... */ }</pre>
+
+    <h2>2. Funções e Métodos Pequenos</h2>
+    <p>O tamanho e o foco de um método determinam sua legibilidade. As regras fundamentais são:</p>
+    <ul>
+        <li><strong>Devem ser curtas:</strong> Um método idealmente deve possuir poucas linhas de código. Se ultrapassar de 15 a 20 linhas, provavelmente está realizando tarefas que deveriam ser isoladas.</li>
+        <li><strong>Fazer apenas uma coisa (Single Responsibility):</strong> O método deve realizar exatamente uma ação e fazê-la bem.</li>
+        <li><strong>Poucos argumentos:</strong> A quantidade ideal de argumentos para uma função é zero (niládica), seguida por um (monádica) e dois (diádica). Evite funções com três ou mais argumentos; nesses casos, agrupe os dados em uma classe de parâmetros.</li>
+    </ul>
+
+    <div class="code-title">Exemplo de Refatoração (Método Multifunção vs. Métodos Focados):</div>
+    <pre>
+// Incorreto (Faz muitas coisas: calcula, valida e atualiza status):
+public void processarPagamento(double valor, String cartao, String titular, String cvv) {
+    if (valor <= 0) {
+        throw new IllegalArgumentException("Valor inválido");
+    }
+    // Lógica complexa de cobrança da operadora de cartão
+    // Lógica de atualização de status do banco de dados
+}
+
+// Correto (Dividido em ações atômicas):
+public void processarPagamento(PagamentoDados dados) {
+    validarValor(dados.getValor());
+    cobrarOperadora(dados.getCartao(), dados.getValor());
+    atualizarStatusPagamento(dados.getPedidoId());
+}</pre>
+
+    <h2>3. Regras de Comentários</h2>
+    <p>O uso de comentários deve ser visto como uma falha na expressividade do código. O objetivo principal é escrever um código tão limpo que os comentários se tornem redundantes.</p>
+    <ul>
+        <li><strong>Comentários ruins:</strong> Aqueles que explicam "o que" o código está fazendo, repetindo o que a própria linha já diz.</li>
+        <li><strong>Comentários aceitáveis:</strong> Explicações de intenções por trás de decisões arquiteturais (o "porquê" de usar determinada técnica) ou alertas de consequências de uso.</li>
+        <li><strong>Código comentado:</strong> Nunca deixe código comentado no repositório. Ele polui o arquivo e cria dúvidas para outros desenvolvedores. Remova-o; o histórico de alterações (Git) serve para recuperar códigos antigos se necessário.</li>
+    </ul>
+
+    <div class="code-title">Exemplo Comparativo:</div>
+    <pre>
+// Incorreto (Comentário redundante):
+// Verifica se o funcionário é elegível para promoção
+if (funcionario.getTempoServico() > 2 && funcionario.getAvaliacao() == Status.EXCELENTE) {
+    // ...
+}
+
+// Correto (O código se explica sozinho):
+if (funcionario.isElegivelParaPromocao()) {
+    // ...
+}</pre>
+
+    <h2>4. Tratamento de Erros Limpo</h2>
+    <p>A forma como gerenciamos falhas dita a robustez da aplicação. As regras para tratamento de erros são:</p>
+    <ul>
+        <li><strong>Use exceções em vez de códigos de retorno:</strong> Códigos de erro forçam o chamador a validar o resultado imediatamente, poluindo o fluxo principal do algoritmo. Exceções separam a lógica de sucesso da lógica de erro.</li>
+        <li><strong>Não retorne e não passe Null:</strong> Retornar nulo força validações excessivas de <code>if (objeto != null)</code> para evitar `NullPointerException`. Em vez disso, retorne uma lista vazia, lance uma exceção apropriada ou use a classe <code>Optional</code> (Java 8+).</li>
+    </ul>
+
+    <h2>5. Princípio DRY (Don't Repeat Yourself)</h2>
+    <p>Evite duplicar regras de negócio ou trechos de algoritmos idênticos em partes diferentes do sistema. A duplicação dificulta a manutenção, pois qualquer correção de bug exigirá alterações em múltiplos arquivos. Centralize a lógica comum em classes ou métodos utilitários reutilizáveis.</p>
+
+</body>
+</html>

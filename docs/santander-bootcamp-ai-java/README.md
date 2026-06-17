@@ -60,7 +60,7 @@ Acompanhe as metas e marque o progresso de cada etapa:
 ### ⏳ Módulo 4. Boas Práticas, Padrões e Dados (14h) - Conclusão: 19/06/2026
 - [ ] **4.1** Maven e Gradle (3h) - **Meta: 14/06/2026**
 - [x] **4.2** Annotations (2h) - *Concluído em 17/06/2026*
-- [ ] **4.3** SOLID e Clean Code (1h) - **Meta: 15/06/2026**
+- [x] **4.3** SOLID e Clean Code (1h) - *Concluído em 17/06/2026*
 - [ ] **4.4** JDBC (6h) - **Meta: 18/06/2026**
 - [ ] **4.5** Desafio projeto – Design Patterns (2h) - **Meta: 19/06/2026**
 

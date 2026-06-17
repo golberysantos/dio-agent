@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Guia de Estudo: Princípios SOLID em Java</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333333;
+        }
+        h1 {
+            color: #1b5e20;
+            border-bottom: 2px solid #1b5e20;
+            padding-bottom: 10px;
+            font-size: 24px;
+        }
+        h2 {
+            color: #2e7d32;
+            margin-top: 35px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+            font-size: 18px;
+        }
+        h3 {
+            color: #388e3c;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+        p, li {
+            font-size: 14px;
+        }
+        ul {
+            margin-bottom: 20px;
+        }
+        code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+        }
+        .code-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 5px;
+            margin-top: 15px;
+        }
+        .info-box {
+            background-color: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 5px 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>☕ Guia de Estudo: Princípios SOLID em Orientação a Objetos</h1>
+    <p>Este documento apresenta um detalhamento conceitual e prático dos cinco princípios do <strong>SOLID</strong> aplicados à programação orientada a objetos com Java. Ele serve como material de suporte didático para estudos e planejamento de arquitetura de software.</p>
+
+    <div class="info-box">
+        <strong>Nota de Formatação:</strong> Este arquivo HTML utiliza estilos CSS inline simples para garantir que, ao ser aberto no <strong>Microsoft Word</strong> (clique com o botão direito -> <em>Abrir com</em> -> <em>Microsoft Word</em>), ele seja convertido automaticamente em um documento de texto com cabeçalhos estruturados e caixas de código legíveis.
+    </div>
+
+    <h2>Introdução ao SOLID</h2>
+    <p>SOLID é um acrônimo criado por Michael Feathers e popularizado por Robert C. Martin (Uncle Bob) que consolida cinco princípios de design de software orientado a objetos. O objetivo principal da aplicação do SOLID é criar sistemas fáceis de manter, estender, testar e refatorar ao longo do tempo.</p>
+
+    <h2>S - Single Responsibility Principle (Princípio da Responsabilidade Única)</h2>
+    <p><strong>Definição:</strong> Uma classe deve ter uma, e apenas uma, razão para ser modificada. Isso significa que ela deve possuir apenas uma única responsabilidade ou papel dentro do sistema.</p>
+    
+    <div class="code-title">Código Incorreto (Violando o SRP):</div>
+    <p>A classe <code>Pedido</code> acumula dados do negócio, lógica de persistência e geração de impressão, gerando acoplamento excessivo:</p>
+    <pre>
+public class Pedido {
+    public void calcularTotal() { /* cálculo */ }
+    public void salvarBancoDados() { /* acesso ao banco */ }
+    public void enviarEmailConfirmacao() { /* lógica de e-mail */ }
+}</pre>
+
+    <div class="code-title">Código Correto (Aplicando o SRP):</div>
+    <p>Dividimos as responsabilidades em classes distintas com coesão máxima:</p>
+    <pre>
+public class Pedido {
+    public void calcularTotal() { /* cálculo */ }
+}
+
+public class PedidoRepository {
+    public void salvar(Pedido pedido) { /* acesso ao banco */ }
+}
+
+public class EmailService {
+    public void enviarConfirmacao(Pedido pedido) { /* lógica de e-mail */ }
+}</pre>
+
+    <h2>O - Open/Closed Principle (Princípio Aberto/Fechado)</h2>
+    <p><strong>Definição:</strong> Entidades de software (classes, módulos, funções) devem estar abertas para extensão, mas fechadas para modificação. Novos comportamentos devem ser adicionados criando novas classes, não alterando as existentes.</p>
+
+    <div class="code-title">Código Incorreto (Violando o OCP):</div>
+    <p>Toda vez que um novo meio de pagamento for adicionado, a classe existente precisará ser modificada, correndo o risco de quebrar regras de negócio já homologadas:</p>
+    <pre>
+public class ProcessadorPagamento {
+    public void processar(String tipo, double valor) {
+        if (tipo.equals("Cartao")) { /* processa cartao */ }
+        else if (tipo.equals("Boleto")) { /* processa boleto */ }
+    }
+}</pre>
+
+    <div class="code-title">Código Correto (Aplicando o OCP):</div>
+    <p>Usamos polimorfismo. A classe processadora depende de uma interface, permitindo novos meios de pagamento sem alterar códigos antigos:</p>
+    <pre>
+public interface MeioPagamento {
+    void pagar(double valor);
+}
+
+public class PagamentoBoleto implements MeioPagamento {
+    public void pagar(double valor) { /* lógica boleto */ }
+}
+
+public class ProcessadorPagamento {
+    public void processar(MeioPagamento meio, double valor) {
+        meio.pagar(valor);
+    }
+}</pre>
+
+    <h2>L - Liskov Substitution Principle (Princípio da Substituição de Liskov)</h2>
+    <p><strong>Definição:</strong> Uma classe derivada (filha) deve ser substituível por sua classe base (pai) sem alterar o funcionamento correto do programa.</p>
+
+    <div class="code-title">Código Incorreto (Violando o LSP):</div>
+    <p>A classe <code>ContaPoupanca</code> herda de <code>Conta</code>, mas lança uma exceção no método <code>renderJuros()</code> por não fazer sentido para esse tipo de conta, quebrando a expectativa do programa ao interagir com a superclasse:</p>
+    <pre>
+public class Conta {
+    public void renderJuros() { /* lógica */ }
+}
+
+public class ContaPoupanca extends Conta {
+    @Override
+    public void renderJuros() {
+        throw new UnsupportedOperationException("Poupança não rende juros dessa forma.");
+    }
+}</pre>
+
+    <div class="code-title">Código Correto (Aplicando o LSP):</div>
+    <p>Refatoramos a hierarquia para que a herança seja conceitualmente correta:</p>
+    <pre>
+public class Conta {
+    // Métodos comuns a todas as contas
+}
+
+public class ContaRendimento extends Conta {
+    public void renderJuros() { /* lógica */ }
+}
+
+public class ContaPoupanca extends ContaRendimento {
+    @Override
+    public void renderJuros() { /* cálculo específico */ }
+}</pre>
+
+    <h2>I - Interface Segregation Principle (Princípio da Segregação de Interfaces)</h2>
+    <p><strong>Definição:</strong> Uma classe cliente não deve ser forçada a depender de métodos de uma interface que ela não utiliza. É preferível criar várias interfaces pequenas e específicas do que uma única interface genérica.</p>
+
+    <div class="code-title">Código Incorreto (Violando o ISP):</div>
+    <p>Uma classe que representa um funcionário terceirizado é obrigada a implementar o método <code>receberBeneficios()</code> de forma vazia ou retornando erro:</p>
+    <pre>
+public interface ContratoTrabalho {
+    void baterPonto();
+    void receberBeneficios();
+}
+
+public class Terceirizado implements ContratoTrabalho {
+    public void baterPonto() { /* marca ponto */ }
+    public void receberBeneficios() {
+        // Terceirizados não recebem benefícios da empresa contratante
+        throw new UnsupportedOperationException();
+    }
+}</pre>
+
+    <div class="code-title">Código Correto (Aplicando o ISP):</div>
+    <p>Segregamos a interface em contratos menores e mais focados:</p>
+    <pre>
+public interface RegistroPonto {
+    void baterPonto();
+}
+
+public interface BeneficiosEmpresa {
+    void receberBeneficios();
+}
+
+public class Terceirizado implements RegistroPonto {
+    public void baterPonto() { /* marca ponto */ }
+}
+
+public class Efetivo implements RegistroPonto, BeneficiosEmpresa {
+    public void baterPonto() { /* marca ponto */ }
+    public void receberBeneficios() { /* recebe benefícios */ }
+}</pre>
+
+    <h2>D - Dependency Inversion Principle (Princípio da Inversão de Dependência)</h2>
+    <p><strong>Definição:</strong> Módulos de alto nível não devem depender de módulos de baixo nível. Ambos devem depender de abstrações (interfaces). Abstrações não devem depender de detalhes; detalhes devem depender de abstrações.</p>
+
+    <div class="code-title">Código Incorreto (Violando o DIP):</div>
+    <p>A classe <code>Interruptor</code> possui acoplamento rígido com a classe física <code>Lampada</code>. Se precisarmos acionar outro dispositivo, a classe precisará ser refeita:</p>
+    <pre>
+public class Lampada {
+    public void ligar() { /* liga */ }
+}
+
+public class Interruptor {
+    private Lampada lampada;
+    public Interruptor() {
+        this.lampada = new Lampada(); // Acoplamento forte
+    }
+    public void acionar() {
+        lampada.ligar();
+    }
+}</pre>
+
+    <div class="code-title">Código Correto (Aplicando o DIP):</div>
+    <p>Criamos uma interface intermediária. O interruptor agora controla qualquer classe que implemente <code>DispositivoLigar</code>:</p>
+    <pre>
+public interface DispositivoLigar {
+    void ligar();
+}
+
+public class Lampada implements DispositivoLigar {
+    public void ligar() { /* liga */ }
+}
+
+public class Interruptor {
+    private DispositivoLigar dispositivo;
+    // O dispositivo é injetado via construtor, dependendo apenas da interface
+    public Interruptor(DispositivoLigar dispositivo) {
+        this.dispositivo = dispositivo;
+    }
+    public void acionar() {
+        dispositivo.ligar();
+    }
+}</pre>
+
+</body>
+</html>

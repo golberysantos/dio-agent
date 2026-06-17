@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Guia de Estudo: Conceitos de JDBC em Java</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333333;
+        }
+        h1 {
+            color: #0d47a1;
+            border-bottom: 2px solid #0d47a1;
+            padding-bottom: 10px;
+            font-size: 24px;
+        }
+        h2 {
+            color: #1565c0;
+            margin-top: 35px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+            font-size: 18px;
+        }
+        h3 {
+            color: #1976d2;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+        p, li {
+            font-size: 14px;
+        }
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+        code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #1565c0;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 5px 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>☕ Guia de Estudo: Conceitos e Fluxo do JDBC em Java</h1>
+    <p>Este documento apresenta um detalhamento didático completo sobre o <strong>JDBC (Java Database Connectivity)</strong>, seu papel no ecossistema Java, as interfaces que o compõem e os métodos mais importantes utilizados no dia a dia do desenvolvimento.</p>
+
+    <div class="info-box">
+        <strong>Nota de Formatação:</strong> Este arquivo HTML foi configurado para ser aberto no <strong>Microsoft Word</strong> (clique com o botão direito -> <em>Abrir com</em> -> <em>Microsoft Word</em>) e convertido instantaneamente em um documento formatado para estudo e impressão.
+    </div>
+
+    <h2>1. O que é e para que serve o JDBC?</h2>
+    <p>O <strong>JDBC</strong> é uma API da plataforma Java Standard Edition (pacote <code>java.sql</code>) que padroniza o acesso a bancos de dados relacionais. Ela funciona como uma camada de abstração: o desenvolvedor escreve código Java padrão e a especificação JDBC se encarrega de traduzir essas chamadas para a linguagem nativa do banco de dados (SQL) utilizando um Driver específico fornecido pelo fabricante do banco de dados (PostgreSQL, MySQL, H2, etc.).</p>
+
+    <h2>2. As 5 Interfaces Principais do JDBC</h2>
+    <p>O funcionamento básico do JDBC baseia-se em cinco interfaces principais localizadas no pacote <code>java.sql</code>:</p>
+    <ul>
+        <li><strong><code>DriverManager</code></strong>: Classe responsável por carregar os drivers de banco de dados e estabelecer a conexão física com o banco através de uma URL de conexão JDBC.</li>
+        <li><strong><code>Connection</code></strong>: Representa a conexão física ativa com o banco de dados. É a partir dela que criamos os comandos e controlamos as transações (commits e rollbacks).</li>
+        <li><strong><code>Statement</code></strong>: Interface usada para executar comandos SQL estáticos de leitura ou gravação.</li>
+        <li><strong><code>PreparedStatement</code></strong>: Subinterface de <code>Statement</code> usada para executar comandos SQL parametrizados (que contêm parâmetros representados por <code>?</code>). Ela compila o comando SQL uma única vez e impede ataques de <strong>SQL Injection</strong>.</li>
+        <li><strong><code>ResultSet</code></strong>: Representa a tabela de dados resultante de uma consulta SQL (<code>SELECT</code>). Ela mantém um cursor apontando para a linha atual de resultados.</li>
+    </ul>
+
+    <h2>3. Principais Métodos e Comandos do JDBC</h2>
+    <p>No desenvolvimento diário com JDBC, os seguintes métodos são os mais utilizados:</p>
+    <ul>
+        <li><code>DriverManager.getConnection(url, usuario, senha)</code>: Cria e retorna um objeto <code>Connection</code>.</li>
+        <li><code>conexao.prepareStatement(sql)</code>: Cria um objeto <code>PreparedStatement</code> a partir de uma string SQL.</li>
+        <li><code>stmt.setString(index, valor)</code> / <code>stmt.setDouble(index, valor)</code>: Define os valores dos parâmetros dinâmicos (placeholders <code>?</code>) no SQL, sendo o índice baseado em 1 (1-indexed).</li>
+        <li><code>stmt.executeQuery()</code>: Executa uma consulta SQL (<code>SELECT</code>) e retorna um objeto <code>ResultSet</code>.</li>
+        <li><code>stmt.executeUpdate()</code>: Executa comandos de manipulação de dados (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>) ou de definição de dados (<code>CREATE TABLE</code>), retornando o número de linhas afetadas.</li>
+        <li><code>rs.next()</code>: Move o cursor do <code>ResultSet</code> para a próxima linha de dados. Retorna <code>true</code> se houver uma linha válida e <code>false</code> se atingir o fim dos resultados.</li>
+        <li><code>rs.getInt(coluna)</code> / <code>rs.getString(coluna)</code>: Recupera o valor de uma coluna da linha atual do <code>ResultSet</code>.</li>
+    </ul>
+
+    <h2>4. Exemplo de Fluxo Sequencial JDBC (Sem Analogias)</h2>
+    <p>Abaixo está um exemplo de fluxo clássico sequencial do JDBC, mostrando a conexão, criação de tabela, inserção segura e consulta de dados:</p>
+
+    <pre>
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+
+public class FluxoJDBCTradicional {
+    public static void main(String[] args) {
+        String url = "jdbc:h2:mem:fluxo_db;DB_CLOSE_DELAY=-1";
+        String usuario = "sa";
+        String senha = "";
+
+        // Uso do try-with-resources para fechamento automático dos recursos
+        try (Connection conn = DriverManager.getConnection(url, usuario, senha)) {
+            
+            // 1. Criar Tabela
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("CREATE TABLE usuarios (id INT AUTO_INCREMENT PRIMARY KEY, nome VARCHAR(255))");
+            }
+            
+            // 2. Inserir Registro Seguro
+            String sqlInsert = "INSERT INTO usuarios (nome) VALUES (?)";
+            try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert)) {
+                stmtInsert.setString(1, "Golbery Oliveira");
+                stmtInsert.executeUpdate();
+            }
+            
+            // 3. Consultar Registro
+            String sqlSelect = "SELECT id, nome FROM usuarios";
+            try (PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect);
+                 ResultSet rs = stmtSelect.executeQuery()) {
+                
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String nome = rs.getString("nome");
+                    System.out.println("ID: " + id + " | Nome: " + nome);
+                }
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("Erro na execução do JDBC: " + e.getMessage());
+        }
+    }
+}</pre>
+
+</body>
+</html>
