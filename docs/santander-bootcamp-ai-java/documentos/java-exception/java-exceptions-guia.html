@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tratamento de Excecoes em Java</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #22263a;
+    --border: #2e3350;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --blue: #38bdf8;
+    --orange: #fb923c;
+    --purple: #c084fc;
+    --font-mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.75;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+    border-bottom: 1px solid var(--accent);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: rgba(99,102,241,0.2);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 0.25rem 1rem;
+    font-size: 12px;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .header p {
+    color: #a5b4fc;
+    font-size: 15px;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* NAV */
+  .toc {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .toc a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+
+  .toc a:hover {
+    color: var(--accent2);
+    border-color: var(--accent);
+    background: rgba(99,102,241,0.1);
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-number {
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  .section p {
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: var(--bg2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 1rem 0;
+    font-size: 14px;
+    color: var(--text2);
+  }
+
+  .callout.warn {
+    border-left-color: var(--yellow);
+  }
+
+  .callout.success {
+    border-left-color: var(--green);
+  }
+
+  .callout.danger {
+    border-left-color: var(--red);
+  }
+
+  .callout strong {
+    color: var(--text);
+  }
+
+  /* CODE */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  .code-header {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .code-lang {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .code-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  pre {
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: #e2e8f0;
+  }
+
+  /* Syntax highlight classes */
+  .kw { color: #c084fc; }       /* keywords */
+  .cl { color: #38bdf8; }       /* class names */
+  .fn { color: #fbbf24; }       /* function names */
+  .st { color: #86efac; }       /* strings */
+  .cm { color: #475569; font-style: italic; } /* comments */
+  .an { color: #fb923c; }       /* annotations */
+  .nm { color: #e2e8f0; }       /* normal */
+  .nu { color: #f472b6; }       /* numbers */
+
+  /* DIAGRAM SVG */
+  .diagram-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.25rem 0;
+    overflow-x: auto;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead tr {
+    background: var(--bg3);
+  }
+
+  th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    color: var(--accent2);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(99,102,241,0.05); }
+
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+  }
+
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .badge-blue { background: rgba(56,189,248,0.15); color: var(--blue); border: 1px solid rgba(56,189,248,0.3); }
+  .badge-purple { background: rgba(192,132,252,0.15); color: var(--purple); border: 1px solid rgba(192,132,252,0.3); }
+
+  /* KEYWORD GRID */
+  .kw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .kw-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+  }
+
+  .kw-card code {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--purple);
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+  }
+
+  .kw-card p {
+    font-size: 13px;
+    color: var(--text2);
+    margin: 0;
+  }
+
+  /* FLOW */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 1rem 0;
+    max-width: 380px;
+  }
+
+  .flow-step {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    font-size: 13px;
+    color: var(--text);
+    position: relative;
+  }
+
+  .flow-step span {
+    color: var(--accent2);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .flow-arrow {
+    text-align: center;
+    color: var(--text3);
+    font-size: 16px;
+    line-height: 1.2;
+    padding: 2px 0;
+  }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    margin: 0.75rem 0;
+  }
+
+  .checklist li {
+    padding: 0.4rem 0;
+    padding-left: 1.75rem;
+    position: relative;
+    font-size: 14px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(99,102,241,0.2);
+    border: 1px solid var(--accent);
+  }
+
+  .checklist li::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 5px;
+    height: 8px;
+    border-right: 2px solid var(--accent2);
+    border-bottom: 2px solid var(--accent2);
+    margin-top: -1px;
+  }
+
+  /* COMPARISON */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .compare-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .compare-card-header {
+    padding: 0.6rem 1rem;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .compare-card-header.before {
+    background: rgba(239,68,68,0.1);
+    border-bottom: 1px solid rgba(239,68,68,0.2);
+    color: var(--red);
+  }
+
+  .compare-card-header.after {
+    background: rgba(34,197,94,0.1);
+    border-bottom: 1px solid rgba(34,197,94,0.2);
+    color: var(--green);
+  }
+
+  .compare-card pre {
+    padding: 0.85rem;
+    font-size: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .compare { grid-template-columns: 1fr; }
+    .toc { gap: 0.35rem; }
+    .container { padding: 1.5rem 1rem; }
+    .header { padding: 2rem 1rem; }
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text3);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    font-size: 13px;
+    color: var(--accent2);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">Guia de Consulta Rapida</div>
+  <h1>Tratamento de Excecoes em Java</h1>
+  <p>Da hierarquia basica ao @ControllerAdvice no Spring Boot — tudo em um unico lugar.</p>
+</div>
+
+<!-- NAV -->
+<nav class="toc">
+  <a href="#s1">O que e uma Excecao</a>
+  <a href="#s2">Hierarquia Throwable</a>
+  <a href="#s3">Checked vs Unchecked</a>
+  <a href="#s4">Palavras-Chave</a>
+  <a href="#s5">Try-with-Resources</a>
+  <a href="#s6">Excecoes Customizadas</a>
+  <a href="#s7">Multi-catch</a>
+  <a href="#s8">Encadeamento</a>
+  <a href="#s9">Finally e Return</a>
+  <a href="#s10">ControllerAdvice</a>
+  <a href="#s11">Regra Pratica</a>
+</nav>
+
+<div class="container">
+
+  <!-- 1. O QUE E UMA EXCECAO -->
+  <section class="section" id="s1">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <h2>O que e uma Excecao?</h2>
+    </div>
+    <p>Uma Excecao (<code>Exception</code>) no Java e um evento anomalo que ocorre durante a execucao do programa (runtime) e interrompe o fluxo normal de instrucoes. Tratar excecoes serve para capturar essas anomalias e permitir que a aplicacao continue rodando de forma estavel.</p>
+    <div class="callout">
+      Excecoes nao sao erros de compilacao — elas ocorrem em tempo de execucao. O compilador so conhece as <strong>Checked Exceptions</strong>, que ele obriga a tratar antecipadamente.
+    </div>
+  </section>
+
+  <!-- 2. HIERARQUIA -->
+  <section class="section" id="s2">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <h2>A Hierarquia da Classe Throwable</h2>
+    </div>
+    <p>No Java, todos os tipos de erros e excecoes estendem a classe raiz <code>java.lang.Throwable</code>. Ela se divide em dois ramos principais:</p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 780 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:780px;display:block;margin:0 auto;">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+          </marker>
+          <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ef4444"/>
+          </marker>
+          <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/>
+          </marker>
+          <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#38bdf8"/>
+          </marker>
+          <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#c084fc"/>
+          </marker>
+        </defs>
+
+        <!-- Throwable -->
+        <rect x="300" y="10" width="160" height="38" rx="8" fill="#312e81" stroke="#6366f1" stroke-width="1.5"/>
+        <text x="380" y="34" text-anchor="middle" fill="#a5b4fc" font-size="14" font-family="monospace" font-weight="bold">Throwable</text>
+
+        <!-- linhas para Error e Exception -->
+        <line x1="340" y1="48" x2="155" y2="100" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="420" y1="48" x2="590" y2="100" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <!-- Error -->
+        <rect x="70" y="100" width="160" height="38" rx="8" fill="#450a0a" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="150" y="124" text-anchor="middle" fill="#fca5a5" font-size="14" font-family="monospace" font-weight="bold">Error</text>
+        <text x="150" y="152" text-anchor="middle" fill="#64748b" font-size="11" font-family="monospace">Unchecked</text>
+
+        <!-- Exception -->
+        <rect x="500" y="100" width="160" height="38" rx="8" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="580" y="124" text-anchor="middle" fill="#7dd3fc" font-size="14" font-family="monospace" font-weight="bold">Exception</text>
+
+        <!-- Error filhos -->
+        <line x1="150" y1="138" x2="80" y2="190" stroke="#ef4444" stroke-width="1" marker-end="url(#arrow-red)"/>
+        <line x1="150" y1="138" x2="150" y2="190" stroke="#ef4444" stroke-width="1" marker-end="url(#arrow-red)"/>
+        <line x1="150" y1="138" x2="220" y2="190" stroke="#ef4444" stroke-width="1" marker-end="url(#arrow-red)"/>
+
+        <rect x="20" y="190" width="130" height="32" rx="6" fill="#1c0606" stroke="#7f1d1d" stroke-width="1"/>
+        <text x="85" y="211" text-anchor="middle" fill="#fca5a5" font-size="11" font-family="monospace">OutOfMemoryError</text>
+
+        <rect x="85" y="190" width="130" height="32" rx="6" fill="#1c0606" stroke="#7f1d1d" stroke-width="1"/>
+        <text x="150" y="211" text-anchor="middle" fill="#fca5a5" font-size="11" font-family="monospace">StackOverflowError</text>
+
+        <rect x="155" y="190" width="130" height="32" rx="6" fill="#1c0606" stroke="#7f1d1d" stroke-width="1"/>
+        <text x="220" y="211" text-anchor="middle" fill="#fca5a5" font-size="11" font-family="monospace">VirtualMachineError</text>
+
+        <!-- Exception -> Checked e RuntimeException -->
+        <line x1="530" y1="138" x2="440" y2="210" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+        <line x1="630" y1="138" x2="680" y2="210" stroke="#c084fc" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+
+        <!-- Checked -->
+        <rect x="355" y="210" width="160" height="38" rx="8" fill="#052e16" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="435" y="228" text-anchor="middle" fill="#86efac" font-size="12" font-family="monospace" font-weight="bold">Checked</text>
+        <text x="435" y="244" text-anchor="middle" fill="#86efac" font-size="10" font-family="monospace">IOException, SQLException...</text>
+
+        <!-- RuntimeException -->
+        <rect x="595" y="210" width="160" height="38" rx="8" fill="#2e1065" stroke="#c084fc" stroke-width="1.5"/>
+        <text x="675" y="228" text-anchor="middle" fill="#d8b4fe" font-size="12" font-family="monospace" font-weight="bold">RuntimeException</text>
+        <text x="675" y="244" text-anchor="middle" fill="#d8b4fe" font-size="10" font-family="monospace">Unchecked</text>
+
+        <!-- RuntimeException filhos -->
+        <line x1="675" y1="248" x2="575" y2="305" stroke="#c084fc" stroke-width="1" marker-end="url(#arrow-purple)"/>
+        <line x1="675" y1="248" x2="675" y2="305" stroke="#c084fc" stroke-width="1" marker-end="url(#arrow-purple)"/>
+        <line x1="675" y1="248" x2="760" y2="305" stroke="#c084fc" stroke-width="1" marker-end="url(#arrow-purple)"/>
+
+        <rect x="505" y="305" width="140" height="30" rx="6" fill="#1a0533" stroke="#7c3aed" stroke-width="1"/>
+        <text x="575" y="325" text-anchor="middle" fill="#d8b4fe" font-size="11" font-family="monospace">NullPointerException</text>
+
+        <rect x="605" y="305" width="140" height="30" rx="6" fill="#1a0533" stroke="#7c3aed" stroke-width="1"/>
+        <text x="675" y="325" text-anchor="middle" fill="#d8b4fe" font-size="11" font-family="monospace">IllegalArgumentException</text>
+
+        <rect x="700" y="305" width="80" height="30" rx="6" fill="#1a0533" stroke="#7c3aed" stroke-width="1"/>
+        <text x="740" y="320" text-anchor="middle" fill="#d8b4fe" font-size="11" font-family="monospace">NumberFormat</text>
+        <text x="740" y="331" text-anchor="middle" fill="#d8b4fe" font-size="10" font-family="monospace">Exception</text>
+
+        <!-- Legenda -->
+        <rect x="20" y="370" width="14" height="14" rx="3" fill="#450a0a" stroke="#ef4444" stroke-width="1"/>
+        <text x="40" y="382" fill="#94a3b8" font-size="12" font-family="sans-serif">Error — nao capturar</text>
+
+        <rect x="190" y="370" width="14" height="14" rx="3" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+        <text x="210" y="382" fill="#94a3b8" font-size="12" font-family="sans-serif">Checked — compilador obriga</text>
+
+        <rect x="430" y="370" width="14" height="14" rx="3" fill="#2e1065" stroke="#c084fc" stroke-width="1"/>
+        <text x="450" y="382" fill="#94a3b8" font-size="12" font-family="sans-serif">Unchecked — compilador nao obriga</text>
+      </svg>
+    </div>
+
+    <p><strong>Error</strong> — falhas graves no nivel da JVM das quais a aplicacao nao consegue se recuperar (ex: <code>OutOfMemoryError</code>, <code>StackOverflowError</code>). Nao devem ser capturados.</p>
+    <p><strong>Exception</strong> — condicoes de erro previsiveis causadas por falha de logica ou fatores externos. Divide-se em Checked e Unchecked.</p>
+  </section>
+
+  <!-- 3. CHECKED VS UNCHECKED -->
+  <section class="section" id="s3">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <h2>Checked vs Unchecked Exceptions</h2>
+    </div>
+    <p>A divisao depende da heranca direta da classe <code>RuntimeException</code>.</p>
+
+    <div class="compare">
+      <div class="compare-card">
+        <div class="compare-card-header after">Checked Exception</div>
+        <pre><span class="cm">// Compilador OBRIGA o tratamento</span>
+<span class="kw">public void</span> <span class="fn">lerArquivo</span>()
+        <span class="kw">throws</span> <span class="cl">IOException</span> {
+  <span class="cl">Files</span>.<span class="fn">readString</span>(
+    <span class="cl">Path</span>.<span class="fn">of</span>(<span class="st">"dados.txt"</span>));
+}</pre>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-header before">Unchecked Exception</div>
+        <pre><span class="cm">// Compilador NAO obriga</span>
+<span class="cm">// Ocorre em runtime</span>
+<span class="kw">int</span> x = <span class="nu">10</span> / <span class="nu">0</span>;
+<span class="cm">// ArithmeticException</span>
+
+<span class="cl">String</span> s = <span class="kw">null</span>;
+s.<span class="fn">length</span>();
+<span class="cm">// NullPointerException</span></pre>
+      </div>
+    </div>
+
+    <h3>A. Checked Exceptions</h3>
+    <p>Sao todas as classes que estendem <code>Exception</code>, mas que nao estendem <code>RuntimeException</code> (ex: <code>IOException</code>, <code>SQLException</code>).</p>
+    <p><strong>Regra do compilador:</strong> O codigo nao compila sem <code>try-catch</code> ou <code>throws</code> na assinatura do metodo.</p>
+    <p><strong>Uso sugerido:</strong> Erros esperados que dependem de fatores externos fora do controle do seu codigo (abrir um arquivo, falha de conexao de rede).</p>
+
+    <h3>B. Unchecked Exceptions</h3>
+    <p>Sao todas as classes que estendem <code>RuntimeException</code> (ex: <code>NullPointerException</code>, <code>ArithmeticException</code>).</p>
+    <p><strong>Regra do compilador:</strong> O programa compila mesmo sem <code>try-catch</code>.</p>
+    <p><strong>Uso sugerido:</strong> Erros causados por falhas de programacao ou logica. A melhor pratica e corrigir a logica — nao apenas usar <code>try-catch</code>.</p>
+  </section>
+
+  <!-- 4. PALAVRAS-CHAVE -->
+  <section class="section" id="s4">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <h2>Estruturas de Tratamento e Palavras-Chave</h2>
+    </div>
+    <p>O controle de excecoes utiliza cinco blocos e palavras-chave especificas:</p>
+
+    <div class="kw-grid">
+      <div class="kw-card">
+        <code>try</code>
+        <p>Delimita o bloco onde a execucao do codigo de risco e monitorada.</p>
+      </div>
+      <div class="kw-card">
+        <code>catch</code>
+        <p>Captura a excecao especifica lancada pelo try e executa a logica de contingencia.</p>
+      </div>
+      <div class="kw-card">
+        <code>finally</code>
+        <p>Executado sempre apos o try-catch, independente de sucesso ou erro. Ideal para liberar recursos.</p>
+      </div>
+      <div class="kw-card">
+        <code>throw</code>
+        <p>Lanca manualmente uma excecao no fluxo: <code>throw new IllegalArgumentException();</code></p>
+      </div>
+      <div class="kw-card">
+        <code>throws</code>
+        <p>Declara na assinatura de um metodo que ele pode propagar uma Checked Exception.</p>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="kw">try</span> {
+  <span class="cm">// codigo de risco monitorado aqui</span>
+  <span class="cl">Files</span>.<span class="fn">readString</span>(<span class="cl">Path</span>.<span class="fn">of</span>(<span class="st">"dados.txt"</span>));
+
+} <span class="kw">catch</span> (<span class="cl">FileNotFoundException</span> e) {
+  <span class="cm">// mais especifico — captura primeiro</span>
+  <span class="fn">log</span>.<span class="fn">error</span>(<span class="st">"Arquivo nao encontrado"</span>, e);
+
+} <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+  <span class="cm">// mais generico — captura depois</span>
+  <span class="fn">log</span>.<span class="fn">error</span>(<span class="st">"Erro de leitura"</span>, e);
+
+} <span class="kw">finally</span> {
+  <span class="cm">// sempre executa — libera recursos aqui</span>
+}</pre>
+    </div>
+
+    <div class="callout warn">
+      <strong>Ordem dos catch blocks:</strong> sempre capture primeiro as excecoes mais especificas (subclasses) e depois as mais genericas (superclasses). Do contrario, o codigo nao compilara por codigo inacessivel.
+    </div>
+  </section>
+
+  <!-- 5. TRY-WITH-RESOURCES -->
+  <section class="section" id="s5">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <h2>Gerenciamento Automatico de Recursos (Try-with-Resources)</h2>
+    </div>
+    <p>Introduzido no Java 7, resolve o problema de fechar recursos de forma segura sem a verbosidade do <code>finally</code>.</p>
+
+    <h3>O problema — finally classico</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — antes do Java 7</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="cl">BufferedReader</span> reader = <span class="kw">null</span>;
+<span class="kw">try</span> {
+  reader = <span class="kw">new</span> <span class="cl">BufferedReader</span>(<span class="kw">new</span> <span class="cl">FileReader</span>(<span class="st">"dados.txt"</span>));
+  <span class="cl">System</span>.out.<span class="fn">println</span>(reader.<span class="fn">readLine</span>());
+} <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+  <span class="cl">System</span>.out.<span class="fn">println</span>(<span class="st">"Erro: "</span> + e.<span class="fn">getMessage</span>());
+} <span class="kw">finally</span> {
+  <span class="kw">if</span> (reader != <span class="kw">null</span>) {
+    <span class="kw">try</span> {
+      reader.<span class="fn">close</span>(); <span class="cm">// close() tambem lanca IOException</span>
+    } <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+      <span class="cl">System</span>.out.<span class="fn">println</span>(<span class="st">"Erro ao fechar: "</span> + e.<span class="fn">getMessage</span>());
+    }
+  }
+}</pre>
+    </div>
+
+    <h3>A solucao — try-with-resources</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java 7+</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="cm">// O BufferedReader sera fechado automaticamente</span>
+<span class="kw">try</span> (<span class="cl">BufferedReader</span> reader = <span class="kw">new</span> <span class="cl">BufferedReader</span>(
+        <span class="kw">new</span> <span class="cl">FileReader</span>(<span class="st">"dados.txt"</span>))) {
+
+  <span class="cl">System</span>.out.<span class="fn">println</span>(reader.<span class="fn">readLine</span>());
+
+} <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+  <span class="cl">System</span>.out.<span class="fn">println</span>(<span class="st">"Erro: "</span> + e.<span class="fn">getMessage</span>());
+}</pre>
+    </div>
+
+    <div class="callout">
+      <strong>Exigencia:</strong> o recurso precisa implementar a interface <code>AutoCloseable</code>. As classes do proprio Java ja implementam: <code>BufferedReader</code>, <code>Connection</code>, <code>InputStream</code>, <code>PreparedStatement</code> e outras.
+    </div>
+
+    <h3>Multiplos recursos</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="cm">// Recursos fechados na ordem INVERSA da declaracao</span>
+<span class="kw">try</span> (
+  <span class="cl">Connection</span> conexao = dataSource.<span class="fn">getConnection</span>();
+  <span class="cl">PreparedStatement</span> stmt = conexao.<span class="fn">prepareStatement</span>(
+      <span class="st">"SELECT * FROM contas"</span>)
+) {
+  <span class="cl">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>();
+} <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+  <span class="kw">throw new</span> <span class="cl">RuntimeException</span>(<span class="st">"Erro na consulta"</span>, e);
+}
+<span class="cm">// stmt fechado primeiro, depois conexao</span></pre>
+    </div>
+
+    <div class="callout warn">
+      <strong>Pegadinha do OCP — excecao suprimida:</strong> se o <code>try</code> lanca uma excecao e o <code>close()</code> tambem lanca, a excecao do <code>close()</code> e suprimida e fica acessivel via <code>e.getSuppressed()</code>. Diferente do <code>finally</code> classico, onde a excecao do <code>finally</code> engolia a do <code>try</code>.
+    </div>
+  </section>
+
+  <!-- 6. EXCECOES CUSTOMIZADAS -->
+  <section class="section" id="s6">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <h2>Excecoes Customizadas</h2>
+    </div>
+    <p>Quando as excecoes nativas do Java nao expressam o erro de negocio com clareza, crie suas proprias. Imagine que um cliente tenta fazer um Pix e a conta nao existe — o Java lancaria uma <code>NullPointerException</code> ou <code>NoSuchElementException</code>, mensagens que nao dizem nada para quem consome a API.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="cm">// Unchecked — nao exige try-catch em quem chama</span>
+<span class="kw">public class</span> <span class="cl">ContaNaoEncontradaException</span>
+        <span class="kw">extends</span> <span class="cl">RuntimeException</span> {
+
+  <span class="kw">public</span> <span class="fn">ContaNaoEncontradaException</span>(<span class="cl">String</span> id) {
+    <span class="kw">super</span>(<span class="st">"Conta nao encontrada: "</span> + id);
+  }
+}
+
+<span class="cm">// Checked — exige try-catch ou throws em quem chama</span>
+<span class="kw">public class</span> <span class="cl">SaldoInsuficienteException</span>
+        <span class="kw">extends</span> <span class="cl">Exception</span> {
+
+  <span class="kw">public</span> <span class="fn">SaldoInsuficienteException</span>(<span class="kw">double</span> saldo) {
+    <span class="kw">super</span>(<span class="st">"Saldo insuficiente: R$ "</span> + saldo);
+  }
+}</pre>
+    </div>
+
+    <div class="callout">
+      A escolha entre <code>extends RuntimeException</code> (unchecked) e <code>extends Exception</code> (checked) segue a mesma logica do guia: erro de logica interna = unchecked. Fator externo que quem chama precisa tratar obrigatoriamente = checked.
+    </div>
+  </section>
+
+  <!-- 7. MULTI-CATCH -->
+  <section class="section" id="s7">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <h2>Multi-catch</h2>
+    </div>
+    <p>Introduzido no Java 7, resolve o problema de repetir blocos <code>catch</code> identicos para tipos diferentes de excecao.</p>
+
+    <div class="compare">
+      <div class="compare-card">
+        <div class="compare-card-header before">Antes do Java 7</div>
+        <pre><span class="kw">try</span> {
+  <span class="cm">// operacao de risco</span>
+} <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+  log.<span class="fn">error</span>(e.<span class="fn">getMessage</span>());
+} <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+  log.<span class="fn">error</span>(e.<span class="fn">getMessage</span>());
+}</pre>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-header after">Java 7+</div>
+        <pre><span class="kw">try</span> {
+  <span class="cm">// operacao de risco</span>
+} <span class="kw">catch</span> (<span class="cl">IOException</span> |
+         <span class="cl">SQLException</span> e) {
+  log.<span class="fn">error</span>(e.<span class="fn">getMessage</span>());
+}</pre>
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <strong>Regra do OCP — heranca proibida no multi-catch:</strong> voce nao pode combinar excecoes que tem relacao de heranca entre si. <code>FileNotFoundException</code> e subclasse de <code>IOException</code> — isso nao compila:
+      <br><br>
+      <code>} catch (IOException | FileNotFoundException e) { }</code>
+      <br><br>
+      Capture apenas a mais generica: <code>} catch (IOException e) { }</code>
+    </div>
+  </section>
+
+  <!-- 8. ENCADEAMENTO -->
+  <section class="section" id="s8">
+    <div class="section-header">
+      <div class="section-number">8</div>
+      <h2>Encadeamento de Excecoes</h2>
+    </div>
+    <p>Resolve um problema critico: nao perder a causa raiz do erro quando voce precisa relancar uma excecao. Sem encadeamento, a causa original some do stack trace.</p>
+
+    <div class="compare">
+      <div class="compare-card">
+        <div class="compare-card-header before">Errado — causa raiz perdida</div>
+        <pre><span class="kw">try</span> {
+  <span class="cl">Files</span>.<span class="fn">readString</span>(
+    <span class="cl">Path</span>.<span class="fn">of</span>(<span class="st">"config.txt"</span>));
+} <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+  <span class="kw">throw new</span> <span class="cl">RuntimeException</span>(
+    <span class="st">"Falha ao carregar"</span>);
+  <span class="cm">// causa original perdida</span>
+}</pre>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-header after">Correto — causa preservada</div>
+        <pre><span class="kw">try</span> {
+  <span class="cl">Files</span>.<span class="fn">readString</span>(
+    <span class="cl">Path</span>.<span class="fn">of</span>(<span class="st">"config.txt"</span>));
+} <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+  <span class="kw">throw new</span> <span class="cl">RuntimeException</span>(
+    <span class="st">"Falha ao carregar"</span>, e);
+  <span class="cm">// e = causa original</span>
+}</pre>
+      </div>
+    </div>
+
+    <p>Com encadeamento, o log exibe o stack trace completo:</p>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Stack Trace</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="cl">RuntimeException</span>: Falha ao carregar configuracao
+    at <span class="cl">ServicoConfig</span>.<span class="fn">carregar</span>(ServicoConfig.java:22)
+<span class="cm">Caused by: IOException: config.txt (No such file or directory)</span>
+    at <span class="cl">Files</span>.<span class="fn">readString</span>(Files.java:...)</pre>
+    </div>
+
+    <h3>Aplicacao com excecoes customizadas</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="kw">public class</span> <span class="cl">FalhaDeTransferenciaException</span>
+        <span class="kw">extends</span> <span class="cl">RuntimeException</span> {
+
+  <span class="kw">public</span> <span class="fn">FalhaDeTransferenciaException</span>(
+          <span class="cl">String</span> mensagem, <span class="cl">Throwable</span> causa) {
+    <span class="kw">super</span>(mensagem, causa); <span class="cm">// causa original preservada</span>
+  }
+}
+
+<span class="cm">// Uso no Service</span>
+<span class="kw">try</span> {
+  transacaoRepository.<span class="fn">save</span>(transacao);
+} <span class="kw">catch</span> (<span class="cl">DataAccessException</span> e) {
+  <span class="kw">throw new</span> <span class="cl">FalhaDeTransferenciaException</span>(
+      <span class="st">"Erro ao registrar transferencia Pix"</span>, e);
+}
+<span class="cm">// O @ControllerAdvice retorna HTTP 500 limpo</span>
+<span class="cm">// mas o log preserva o DataAccessException original</span></pre>
+    </div>
+  </section>
+
+  <!-- 9. FINALLY COM RETURN -->
+  <section class="section" id="s9">
+    <div class="section-header">
+      <div class="section-number">9</div>
+      <h2>A Regra do finally com return — Pegadinha do OCP</h2>
+    </div>
+    <p>O bloco <code>finally</code> sempre executa — e se ele tiver um <code>return</code>, ele sobrescreve qualquer <code>return</code> que estava no <code>try</code> ou no <code>catch</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — exemplo basico</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="kw">public int</span> <span class="fn">calcular</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">return</span> <span class="nu">1</span>; <span class="cm">// este return e ignorado</span>
+  } <span class="kw">finally</span> {
+    <span class="kw">return</span> <span class="nu">2</span>; <span class="cm">// sempre retorna 2</span>
+  }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — excecao engolida</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="kw">public int</span> <span class="fn">calcular</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">throw new</span> <span class="cl">RuntimeException</span>(<span class="st">"erro"</span>);
+  } <span class="kw">finally</span> {
+    <span class="kw">return</span> <span class="nu">2</span>; <span class="cm">// excecao ENGOLIDA silenciosamente</span>
+  }
+}
+<span class="cm">// Retorna 2 como se nada tivesse acontecido</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — variacao mais cobrada no OCP</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="kw">public</span> <span class="cl">String</span> <span class="fn">obterStatus</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">return</span> <span class="st">"try"</span>;
+  } <span class="kw">catch</span> (<span class="cl">Exception</span> e) {
+    <span class="kw">return</span> <span class="st">"catch"</span>;
+  } <span class="kw">finally</span> {
+    <span class="kw">return</span> <span class="st">"finally"</span>; <span class="cm">// sempre este</span>
+  }
+}</pre>
+    </div>
+
+    <ul class="checklist">
+      <li><code>finally</code> sempre executa — exceto se <code>System.exit()</code> for chamado ou a JVM travar.</li>
+      <li>Se <code>finally</code> tem <code>return</code>, ele sobrescreve qualquer outro <code>return</code>.</li>
+      <li>Se <code>finally</code> tem <code>return</code>, ele engole qualquer excecao em andamento silenciosamente.</li>
+      <li>Boa pratica: nunca coloque <code>return</code> dentro de <code>finally</code>. Use-o apenas para liberar recursos.</li>
+    </ul>
+
+    <h3>O que significa "liberar recursos"</h3>
+    <p>"Liberar recursos" significa fechar ou encerrar qualquer coisa que consome memoria, conexao ou arquivo e que precisa ser finalizada independente do sucesso ou falha da operacao.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — liberacao correta de recursos no finally</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="cl">Connection</span> conexao = <span class="kw">null</span>;
+<span class="kw">try</span> {
+  conexao = dataSource.<span class="fn">getConnection</span>();
+  <span class="cm">// executa operacao no banco</span>
+} <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+  <span class="kw">throw new</span> <span class="cl">RuntimeException</span>(<span class="st">"Erro na transacao"</span>, e);
+} <span class="kw">finally</span> {
+  <span class="kw">if</span> (conexao != <span class="kw">null</span>) {
+    conexao.<span class="fn">close</span>(); <span class="cm">// libera conexao — sucesso ou falha</span>
+  }
+}</pre>
+    </div>
+
+    <div class="callout success">
+      Hoje o <code>try-with-resources</code> substitui o <code>finally</code> para liberacao de recursos de forma mais segura e legivel. Use <code>finally</code> apenas quando nao puder usar <code>try-with-resources</code>.
+    </div>
+  </section>
+
+  <!-- 10. CONTROLLER ADVICE -->
+  <section class="section" id="s10">
+    <div class="section-header">
+      <div class="section-number">10</div>
+      <h2>@ControllerAdvice no Spring Boot</h2>
+    </div>
+
+    <p>O <code>@ControllerAdvice</code> e uma annotation do Spring Boot que define uma classe como um <strong>interceptador global de excecoes</strong>. Ele funciona como um ponto central de tratamento de erros para toda a aplicacao — quando qualquer Controller lanca uma excecao que nao foi capturada localmente, o Spring automaticamente redireciona essa excecao para o metodo correspondente dentro da classe anotada.</p>
+
+    <p>O nome combina dois conceitos: <strong>Controller</strong> — porque intercepta excecoes antes que cheguem ao cliente — e <strong>Advice</strong> — termo da Programacao Orientada a Aspectos (AOP) que significa comportamento aplicado de forma transversal, sem que cada ponto da aplicacao precise conhece-lo.</p>
+
+    <h3>O problema — sem @ControllerAdvice</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — try-catch repetido em cada Controller</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="an">@RestController</span>
+<span class="kw">public class</span> <span class="cl">TransferenciaController</span> {
+
+  <span class="an">@PostMapping</span>(<span class="st">"/transferir"</span>)
+  <span class="kw">public</span> <span class="cl">ResponseEntity</span>&lt;?&gt; <span class="fn">transferir</span>(
+          <span class="an">@RequestBody</span> <span class="cl">TransferenciaRequest</span> request) {
+    <span class="kw">try</span> {
+      servicoTransferencia.<span class="fn">transferir</span>(request);
+      <span class="kw">return</span> <span class="cl">ResponseEntity</span>.<span class="fn">ok</span>().<span class="fn">build</span>();
+    } <span class="kw">catch</span> (<span class="cl">ContaNaoEncontradaException</span> e) {
+      <span class="kw">return</span> <span class="cl">ResponseEntity</span>.<span class="fn">status</span>(<span class="nu">404</span>).<span class="fn">body</span>(e.<span class="fn">getMessage</span>());
+    } <span class="kw">catch</span> (<span class="cl">SaldoInsuficienteException</span> e) {
+      <span class="kw">return</span> <span class="cl">ResponseEntity</span>.<span class="fn">status</span>(<span class="nu">422</span>).<span class="fn">body</span>(e.<span class="fn">getMessage</span>());
+    } <span class="kw">catch</span> (<span class="cl">RuntimeException</span> e) {
+      <span class="kw">return</span> <span class="cl">ResponseEntity</span>.<span class="fn">status</span>(<span class="nu">500</span>).<span class="fn">body</span>(<span class="st">"Erro interno"</span>);
+    }
+  }
+}
+<span class="cm">// Com 10 Controllers, esse try-catch se repete 10 vezes</span></pre>
+    </div>
+
+    <h3>A solucao — @ControllerAdvice centraliza tudo</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java — handler global</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="an">@ControllerAdvice</span>
+<span class="kw">public class</span> <span class="cl">GlobalExceptionHandler</span> {
+
+  <span class="an">@ExceptionHandler</span>(<span class="cl">ContaNaoEncontradaException</span>.class)
+  <span class="kw">public</span> <span class="cl">ResponseEntity</span>&lt;<span class="cl">ErroResponse</span>&gt; <span class="fn">handleContaNaoEncontrada</span>(
+          <span class="cl">ContaNaoEncontradaException</span> ex) {
+    <span class="kw">return</span> <span class="cl">ResponseEntity</span>
+        .<span class="fn">status</span>(<span class="nu">404</span>)
+        .<span class="fn">body</span>(<span class="kw">new</span> <span class="cl">ErroResponse</span>(<span class="nu">404</span>, ex.<span class="fn">getMessage</span>(),
+            <span class="cl">LocalDateTime</span>.<span class="fn">now</span>()));
+  }
+
+  <span class="an">@ExceptionHandler</span>(<span class="cl">SaldoInsuficienteException</span>.class)
+  <span class="kw">public</span> <span class="cl">ResponseEntity</span>&lt;<span class="cl">ErroResponse</span>&gt; <span class="fn">handleSaldoInsuficiente</span>(
+          <span class="cl">SaldoInsuficienteException</span> ex) {
+    <span class="kw">return</span> <span class="cl">ResponseEntity</span>
+        .<span class="fn">status</span>(<span class="nu">422</span>)
+        .<span class="fn">body</span>(<span class="kw">new</span> <span class="cl">ErroResponse</span>(<span class="nu">422</span>, ex.<span class="fn">getMessage</span>(),
+            <span class="cl">LocalDateTime</span>.<span class="fn">now</span>()));
+  }
+
+  <span class="an">@ExceptionHandler</span>(<span class="cl">RuntimeException</span>.class)
+  <span class="kw">public</span> <span class="cl">ResponseEntity</span>&lt;<span class="cl">ErroResponse</span>&gt; <span class="fn">handleRuntime</span>(
+          <span class="cl">RuntimeException</span> ex) {
+    <span class="kw">return</span> <span class="cl">ResponseEntity</span>
+        .<span class="fn">status</span>(<span class="nu">500</span>)
+        .<span class="fn">body</span>(<span class="kw">new</span> <span class="cl">ErroResponse</span>(<span class="nu">500</span>, <span class="st">"Erro interno"</span>,
+            <span class="cl">LocalDateTime</span>.<span class="fn">now</span>()));
+  }
+}</pre>
+    </div>
+
+    <h3>Controller limpo — sem try-catch</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="an">@RestController</span>
+<span class="kw">public class</span> <span class="cl">TransferenciaController</span> {
+
+  <span class="an">@PostMapping</span>(<span class="st">"/transferir"</span>)
+  <span class="kw">public</span> <span class="cl">ResponseEntity</span>&lt;?&gt; <span class="fn">transferir</span>(
+          <span class="an">@RequestBody</span> <span class="cl">TransferenciaRequest</span> request) {
+    servicoTransferencia.<span class="fn">transferir</span>(request);
+    <span class="kw">return</span> <span class="cl">ResponseEntity</span>.<span class="fn">ok</span>().<span class="fn">build</span>();
+    <span class="cm">// excecoes sobem automaticamente para GlobalExceptionHandler</span>
+  }
+}</pre>
+    </div>
+
+    <h3>Corpo de erro padronizado — ErroResponse com Record Java 21</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Java 21 — Record</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre><span class="kw">public record</span> <span class="cl">ErroResponse</span>(
+  <span class="kw">int</span> status,
+  <span class="cl">String</span> mensagem,
+  <span class="cl">LocalDateTime</span> timestamp
+) {}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JSON — resposta padronizada</span>
+        <div class="code-dots">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#22c55e"></div>
+        </div>
+      </div>
+      <pre>{
+  <span class="st">"status"</span>: <span class="nu">404</span>,
+  <span class="st">"mensagem"</span>: <span class="st">"Conta nao encontrada: CPF-001"</span>,
+  <span class="st">"timestamp"</span>: <span class="st">"2026-06-12T14:30:00"</span>
+}</pre>
+    </div>
+
+    <h3>Como o fluxo funciona</h3>
+    <div class="diagram-container">
+      <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;display:block;margin:0 auto;">
+        <defs>
+          <marker id="farrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+          </marker>
+        </defs>
+
+        <rect x="150" y="10" width="200" height="38" rx="8" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="250" y="34" text-anchor="middle" fill="#7dd3fc" font-size="13" font-family="monospace">Requisicao HTTP</text>
+
+        <line x1="250" y1="48" x2="250" y2="78" stroke="#6366f1" stroke-width="1.5" marker-end="url(#farrow)"/>
+
+        <rect x="150" y="78" width="200" height="38" rx="8" fill="#1a1d27" stroke="#6366f1" stroke-width="1.5"/>
+        <text x="250" y="95" text-anchor="middle" fill="#a5b4fc" font-size="12" font-family="monospace">Controller</text>
+        <text x="250" y="110" text-anchor="middle" fill="#64748b" font-size="11" font-family="monospace">chama o Service</text>
+
+        <line x1="250" y1="116" x2="250" y2="146" stroke="#6366f1" stroke-width="1.5" marker-end="url(#farrow)"/>
+
+        <rect x="150" y="146" width="200" height="38" rx="8" fill="#1a1d27" stroke="#6366f1" stroke-width="1.5"/>
+        <text x="250" y="163" text-anchor="middle" fill="#a5b4fc" font-size="12" font-family="monospace">Service</text>
+        <text x="250" y="178" text-anchor="middle" fill="#ef4444" font-size="11" font-family="monospace">lanca ContaNaoEncontradaException</text>
+
+        <line x1="250" y1="184" x2="250" y2="214" stroke="#ef4444" stroke-width="1.5" marker-end="url(#farrow)"/>
+
+        <rect x="110" y="214" width="280" height="38" rx="8" fill="#1e1b4b" stroke="#c084fc" stroke-width="1.5"/>
+        <text x="250" y="231" text-anchor="middle" fill="#d8b4fe" font-size="12" font-family="monospace">GlobalExceptionHandler</text>
+        <text x="250" y="246" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">@ExceptionHandler captura</text>
+
+        <line x1="250" y1="252" x2="250" y2="282" stroke="#22c55e" stroke-width="1.5" marker-end="url(#farrow)"/>
+
+        <rect x="110" y="282" width="280" height="32" rx="8" fill="#052e16" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="250" y="303" text-anchor="middle" fill="#86efac" font-size="12" font-family="monospace">HTTP 404 — ErroResponse JSON</text>
+      </svg>
+    </div>
+
+    <div class="callout">
+      O <code>@ControllerAdvice</code> captura excecoes especificas antes das genericas — a mesma regra de ordem dos <code>catch</code> blocks. O <code>ErroResponse</code> usa <strong>Record do Java 21</strong> — imutavel e sem boilerplate.
+    </div>
+  </section>
+
+  <!-- 11. REGRA PRATICA -->
+  <section class="section" id="s11">
+    <div class="section-header">
+      <div class="section-number">11</div>
+      <h2>Regra Pratica — Resumo</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Obrigatorio tratar (try/catch) ou declarar (throws)?</th>
+            <th>Quando usar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-red">Error</span></td>
+            <td>Nao</td>
+            <td>Falhas graves da JVM — nao capturar</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">RuntimeException e subclasses</span></td>
+            <td>Nao</td>
+            <td>Erros de programacao — corrigir a logica</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">Outras subclasses de Exception</span></td>
+            <td>Sim</td>
+            <td>Fatores externos previsiveis — arquivo, rede, banco</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">Excecoes Customizadas Unchecked</span></td>
+            <td>Nao</td>
+            <td>Regras de negocio — ContaNaoEncontradaException</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Boas Praticas Consolidadas</h3>
+    <ul class="checklist">
+      <li>Capture sempre a excecao mais especifica possivel — nunca <code>catch (Exception e)</code> ou <code>catch (Throwable t)</code> de forma generica.</li>
+      <li>Ordene os blocos <code>catch</code> do mais especifico para o mais generico.</li>
+      <li>Nunca silencie excecoes com blocos <code>catch</code> vazios.</li>
+      <li>Use <code>try-with-resources</code> sempre que trabalhar com recursos que implementam <code>AutoCloseable</code>.</li>
+      <li>Preserve a causa raiz ao relancar — sempre passe o <code>Throwable</code> original no segundo argumento.</li>
+      <li>Crie excecoes customizadas para expressar erros de negocio com clareza.</li>
+      <li>Nunca coloque <code>return</code> dentro de <code>finally</code>.</li>
+      <li>Centralize o tratamento de excecoes no Spring Boot com <code>@ControllerAdvice</code>.</li>
+    </ul>
+
+    <div class="callout success">
+      <strong>Java 17 vs Java 21:</strong> ambas as versoes tem o mesmo comportamento de excecoes. Nao ha mudancas de linguagem nessa area entre as duas versoes — este guia se aplica a ambos os contextos sem ajuste.
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Tratamento de Excecoes em Java — Guia de Consulta Rapida
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Guia Completo de Estudo: Apache Maven</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333333;
+        }
+        h1 {
+            color: #0d47a1;
+            border-bottom: 2px solid #0d47a1;
+            padding-bottom: 10px;
+            font-size: 26px;
+        }
+        h2 {
+            color: #1565c0;
+            margin-top: 30px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+            font-size: 20px;
+        }
+        h3 {
+            color: #1e88e5;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        p, li {
+            font-size: 14px;
+        }
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #d3d3d3;
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            background-color: #f5f5f5;
+            color: #333;
+            font-weight: bold;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #1e88e5;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>☕ Guia Completo de Estudo: Apache Maven</h1>
+    <p>Este documento reúne todo o conteúdo conceitual, estrutural e prático sobre o <strong>Apache Maven</strong>. Ele serve como material de consulta didático e roteiro de aula para desenvolvedores Java.</p>
+
+    <div class="info-box">
+        <strong>Nota de Utilização:</strong> Para abrir este arquivo no Microsoft Word com a formatação preservada, basta clicar no arquivo com o botão direito do mouse, selecionar a opção <em>"Abrir com"</em> e escolher o <strong>Microsoft Word</strong>.
+    </div>
+
+    <h2>1. Introdução ao Apache Maven</h2>
+    <p>O Apache Maven é uma ferramenta de automação de compilação (build) e gerenciamento de dependências. Ele centraliza o processo de ciclo de vida do desenvolvimento de aplicações Java. Suas principais responsabilidades são:</p>
+    <ul>
+        <li><strong>Gerenciamento de dependências:</strong> Download e atualização de bibliotecas externas a partir de repositórios remotos (como o Maven Central).</li>
+        <li><strong>Repositório Local (pasta <code>.m2</code>):</strong> Salvar as bibliotecas baixadas no diretório local da máquina (<code>C:\Users\Usuario\.m2\repository</code>) para reutilização futura sem a necessidade de novos downloads.</li>
+        <li><strong>Padronização de diretórios:</strong> Definição de uma estrutura unificada de pastas compartilhada por todos os projetos Maven.</li>
+    </ul>
+
+    <h2>2. Estrutura de Diretórios Padrão</h2>
+    <p>O Maven adota a filosofia de "Convenção sobre Configuração", determinando uma árvore de diretórios fixa:</p>
+    <pre>
+meu-projeto/
+├── pom.xml                      <-- Configuração principal do Maven
+├── src/
+│   ├── main/
+│   │   ├── java/                <-- Código-fonte Java do sistema (.java)
+│   │   └── resources/           <-- Arquivos de propriedades e configurações (.yml, .properties, .xml)
+│   └── test/
+│       ├── java/                <-- Classes de testes automatizados (ex: JUnit)
+│       └── resources/           <-- Configurações exclusivas do ambiente de testes
+    </pre>
+
+    <h2>3. Anatomia Detalhada do Arquivo pom.xml</h2>
+    <p>O <code>pom.xml</code> (Project Object Model) é um arquivo estruturado em formato XML. Abaixo são explicados os principais blocos e suas respectivas tags.</p>
+
+    <h3>3.1. Coordenadas do Projeto (GAV)</h3>
+    <p>Servem para identificar de forma única o projeto dentro do ecossistema de bibliotecas do Java:</p>
+    <ul>
+        <li><code>&lt;groupId&gt;</code>: Organização ou empresa dona do projeto. Segue a estrutura reversa de domínio de internet (ex: <code>com.santander</code>).</li>
+        <li><code>&lt;artifactId&gt;</code>: Nome do projeto ou do módulo de software gerado (ex: <code>exemplo-maven</code>).</li>
+        <li><code>&lt;version&gt;</code>: A versão do projeto.
+            <ul>
+                <li><strong>SNAPSHOT (ex: 1.0.0-SNAPSHOT):</strong> Indica versão em desenvolvimento ativo. O Maven atualizará os binários sempre que houver novo build.</li>
+                <li><strong>Release (ex: 1.0.0):</strong> Indica versão final, estável e imutável.</li>
+            </ul>
+        </li>
+        <li><code>&lt;packaging&gt;</code>: Tipo de arquivo a ser gerado (ex: <code>jar</code> para console/APIs ou <code>war</code> para aplicações web corporativas).</li>
+    </ul>
+
+    <h3>3.2. A Estrutura do Bloco de Dependências</h3>
+    <p>O bloco <code>&lt;dependencies&gt;</code> gerencia a importação de bibliotecas externas de forma automática:</p>
+    <pre>
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.postgresql&lt;/groupId&gt;
+        &lt;artifactId&gt;postgresql&lt;/artifactId&gt;
+        &lt;version&gt;42.7.1&lt;/version&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;type&gt;jar&lt;/type&gt;
+        &lt;optional&gt;false&lt;/optional&gt;
+        &lt;exclusions&gt;
+            &lt;exclusion&gt;
+                &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+                &lt;artifactId&gt;slf4j-simple&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+    </pre>
+
+    <h4>Explicação das Tags Internas da Dependência:</h4>
+    <ul>
+        <li><code>&lt;groupId&gt;</code> e <code>&lt;artifactId&gt;</code>: Coordenadas que localizam a biblioteca desejada.</li>
+        <li><code>&lt;version&gt;</code>: Versão exata a ser baixada.</li>
+        <li><code>&lt;scope&gt;</code>: Define a visibilidade da dependência no ciclo de vida (ver detalhes na seção 4).</li>
+        <li><code>&lt;type&gt;</code>: Formato de empacotamento da biblioteca (geralmente <code>jar</code>).</li>
+        <li><code>&lt;optional&gt;</code>: Se definido como <code>true</code>, impede que outros projetos herdem esta biblioteca indiretamente (evitando dependências transitivas indesejadas).</li>
+        <li><code>&lt;exclusions&gt;</code>: Usado para bloquear dependências transitivas indesejadas trazidas automaticamente pela biblioteca externa.</li>
+    </ul>
+
+    <h2>4. Escopos de Dependências (Scope)</h2>
+    <p>Controlam em quais fases do projeto a dependência é adicionada ao Classpath:</p>
+    <ul>
+        <li><strong><code>compile</code> (Padrão):</strong> A dependência fica disponível na compilação, testes e execução do sistema. É empacotada no artefato final.</li>
+        <li><strong><code>test</code>:</strong> Disponível apenas para compilar e rodar testes da pasta <code>src/test/java</code> (ex: JUnit). Não vai para a produção.</li>
+        <li><strong><code>provided</code>:</strong> Usada na compilação, mas omitida no empacotamento final porque o servidor web de execução já fornece essa biblioteca nativamente.</li>
+        <li><strong><code>runtime</code>:</strong> Desnecessária para compilar, mas exigida para a execução do sistema (ex: drivers JDBC).</li>
+    </ul>
+
+    <h2>5. Herança de Configurações com a Tag Parent</h2>
+    <p>A tag <code>&lt;parent&gt;</code> permite reutilizar definições de um projeto pai (Parent POM) para simplificar a configuração de projetos filhos:</p>
+    <pre>
+&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;
+    </pre>
+    <p>O POM filho herda automaticamente as propriedades, versões recomendadas, catalogações de plugins e dependências básicas do pai.</p>
+
+    <div class="warning-box">
+        <strong>Regra de Sobrescrita:</strong> O projeto filho tem prioridade absoluta. Se declarar uma propriedade com o mesmo nome da propriedade do pai (ex: <code>&lt;java.version&gt;21&lt;/java.version&gt;</code>), o valor do filho sobrescreverá a configuração herdada do pai.
+    </div>
+
+    <h2>6. Tags Avançadas do pom.xml</h2>
+    <ul>
+        <li><strong><code>&lt;dependencyManagement&gt;</code>:</strong> Declara dependências e suas versões no projeto pai para que os filhos apenas referenciem o <code>groupId</code> e <code>artifactId</code> sem a necessidade de reescrever a versão, garantindo alinhamento e consistência de versões.</li>
+        <li><strong><code>&lt;pluginManagement&gt;</code>:</strong> Mesma funcionalidade do gerenciamento de dependências, mas focada na padronização de plugins de build.</li>
+        <li><strong><code>&lt;modules&gt;</code>:</strong> Lista os subdiretórios pertencentes ao projeto principal em estruturas multimódulos.</li>
+        <li><strong><code>&lt;repositories&gt;</code>:</strong> Adiciona servidores de dependência externos alternativos ao Maven Central.</li>
+        <li><strong><code>&lt;distributionManagement&gt;</code>:</strong> Configura o endereço IP ou a URL do servidor interno onde o JAR gerado pelo build deve ser publicado (Nexus, Artifactory, etc.).</li>
+        <li><strong><code>&lt;profiles&gt;</code>:</strong> Permite criar configurações que variam de acordo com o ambiente (ex: desenvolvimento, homologação e produção).</li>
+    </ul>
+
+    <h2>7. Ciclo de Vida do Build e Comandos Úteis</h2>
+    <p>O ciclo de vida do Maven é dividido em fases sequenciais executadas a partir do terminal:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Descrição e Ação Realizada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>mvn clean</code></td>
+                <td>Apaga a pasta temporária de compilação (<code>target/</code>), limpando builds antigos.</td>
+            </tr>
+            <tr>
+                <td><code>mvn compile</code></td>
+                <td>Compila todos os códigos Java principais na pasta <code>src/main/java</code>.</td>
+            </tr>
+            <tr>
+                <td><code>mvn test</code></td>
+                <td>Compila e executa todos os testes de JUnit na pasta <code>src/test/java</code>.</td>
+            </tr>
+            <tr>
+                <td><code>mvn package</code></td>
+                <td>Executa testes e empacota o código em formato de distribuição (gerando o arquivo <code>.jar</code> ou <code>.war</code>).</td>
+            </tr>
+            <tr>
+                <td><code>mvn install</code></td>
+                <td>Gera o pacote e o publica no repositório local (pasta <code>.m2</code>) para que outros projetos locais possam utilizá-lo.</td>
+            </tr>
+            <tr>
+                <td><code>mvn deploy</code></td>
+                <td>Publica a versão estável final do JAR no repositório remoto corporativo configurado.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

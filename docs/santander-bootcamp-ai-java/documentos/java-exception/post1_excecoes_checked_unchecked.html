@@ -1,0 +1,97 @@
+
+<style>
+  .post { max-width: 680px; font-size: 15px; color: var(--color-text-primary); line-height: 1.7; padding: 1rem 0; }
+  .post-title { font-size: 18px; font-weight: 500; margin: 0 0 6px; }
+  .post-tag { display: inline-block; font-size: 12px; background: var(--color-background-info); color: var(--color-text-info); border-radius: var(--border-radius-md); padding: 2px 10px; margin-bottom: 1.25rem; }
+  .post p { margin: 0 0 1rem; }
+  .post h3 { font-size: 15px; font-weight: 500; margin: 1.75rem 0 0.5rem; }
+  pre { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 1rem; font-size: 13px; font-family: var(--font-mono); overflow-x: auto; margin: 0.5rem 0 1rem; line-height: 1.6; white-space: pre; }
+  .callout { background: var(--color-background-secondary); border-left: 3px solid var(--color-border-secondary); padding: 0.75rem 1rem; font-size: 14px; color: var(--color-text-secondary); margin: 1rem 0; }
+  .serie-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin: 1rem 0 1.5rem; }
+  .serie-box p { margin: 0 0 0.5rem; font-size: 13px; color: var(--color-text-secondary); }
+  .serie-box ol { margin: 0; padding-left: 1.25rem; font-size: 13px; color: var(--color-text-secondary); line-height: 1.9; }
+  .serie-box ol li.current { color: var(--color-text-primary); font-weight: 500; }
+  hr { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.75rem 0; }
+  .advanced { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-top: 1.5rem; }
+  .advanced-label { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 0.5rem; }
+</style>
+
+<div class="post">
+  <p class="post-title">O que é uma Excecao e por que o Java tem duas categorias — Checked e Unchecked</p>
+  <span class="post-tag">serie: Tratamento de Excecoes em Java — post 1 de 8</span>
+
+  <p>Fala, pessoal! Vou iniciar uma serie curta sobre tratamento de excecoes em Java no contexto do bootcamp. Cada post cobre um conceito de forma direta, sem enrolar. O primeiro e o mais fundamental: o que e uma excecao e por que o Java divide em duas categorias.</p>
+
+  <div class="serie-box">
+    <p>roteiro da serie</p>
+    <ol>
+      <li class="current">Checked e Unchecked — voce esta aqui</li>
+      <li>A hierarquia do Throwable</li>
+      <li>try, catch, finally, throw e throws</li>
+      <li>Try-with-resources</li>
+      <li>Excecoes customizadas</li>
+      <li>Multi-catch e encadeamento</li>
+      <li>A pegadinha do finally com return</li>
+      <li>@ControllerAdvice no Spring Boot</li>
+    </ol>
+  </div>
+
+  <h3>O que e uma excecao?</h3>
+  <p>Uma excecao e um evento anomalo que ocorre durante a execucao do programa e interrompe o fluxo normal de instrucoes. Ela nao e um erro de compilacao — o codigo compila normalmente, mas algo inesperado acontece em runtime.</p>
+
+  <p>O objetivo de tratar excecoes e capturar essa anomalia e permitir que a aplicacao continue rodando de forma estavel — ou, no minimo, falhe de forma controlada e com uma mensagem clara.</p>
+
+  <h3>Por que o Java tem duas categorias?</h3>
+  <p>O Java divide as excecoes em duas categorias com base em uma pergunta: o compilador consegue prever que esse erro pode acontecer?</p>
+
+  <p>Se sim — o compilador obriga voce a tratar. Sao as <strong>Checked Exceptions</strong>.</p>
+  <p>Se nao — o compilador nao interfere. Sao as <strong>Unchecked Exceptions</strong>.</p>
+
+  <h3>Checked Exception — o compilador obriga</h3>
+  <p>Sao erros previsiveis que dependem de fatores externos ao seu codigo — abrir um arquivo que pode nao existir, conectar a um banco que pode estar fora do ar. O compilador sabe que isso pode falhar e exige que voce trate antes de rodar.</p>
+
+<pre>// O compilador nao deixa compilar sem tratamento
+public void lerArquivo() throws IOException {
+    Files.readString(Path.of("dados.txt"));
+}
+
+// Ou com try-catch
+try {
+    Files.readString(Path.of("dados.txt"));
+} catch (IOException e) {
+    System.out.println("Arquivo nao encontrado: " + e.getMessage());
+}</pre>
+
+  <h3>Unchecked Exception — o compilador nao interfere</h3>
+  <p>Sao erros causados por falhas de logica ou programacao — acessar um objeto nulo, dividir por zero, passar um argumento invalido. O compilador nao consegue prever porque dependem do estado em runtime.</p>
+
+<pre>// Compila normalmente — falha apenas em execucao
+String nome = null;
+nome.length(); // NullPointerException
+
+int resultado = 10 / 0; // ArithmeticException</pre>
+
+  <div class="callout">
+    A melhor pratica para Unchecked Exceptions nao e usar try-catch — e corrigir a logica. Se um objeto pode ser nulo, valide antes de usar. Se um argumento pode ser invalido, verifique antes de processar.
+  </div>
+
+  <h3>A regra que define a categoria</h3>
+  <p>A divisao depende de heranca. Se a excecao estende <code>RuntimeException</code>, e Unchecked — o compilador nao obriga tratamento. Se estende <code>Exception</code> diretamente, e Checked — o compilador obriga.</p>
+
+<pre>// Checked — estende Exception diretamente
+public class SaldoInsuficienteException extends Exception { }
+
+// Unchecked — estende RuntimeException
+public class ContaNaoEncontradaException extends RuntimeException { }</pre>
+
+  <hr>
+
+  <div class="advanced">
+    <p class="advanced-label">para quem ja tem uma bagagem maior em Java</p>
+    <p style="margin: 0; font-size: 14px;">No Spring Boot, a convencao dominante e usar Unchecked Exceptions para excecoes de dominio — como <code>ContaNaoEncontradaException</code>. O motivo e pratico: o <code>@ControllerAdvice</code> centraliza o tratamento globalmente, tornando desnecessario forcar <code>try-catch</code> em cada Service. Checked Exceptions fazem mais sentido em operacoes de infraestrutura — leitura de arquivo, conexao JDBC — onde quem chama precisa decidir explicitamente como reagir a falha.</p>
+  </div>
+
+  <hr>
+
+  <p style="font-size: 14px; color: var(--color-text-secondary);">Voce ja teve duvida sobre quando criar uma excecao Checked ou Unchecked no seu projeto? Qual foi o contexto? Bora trocar experiencia aqui embaixo.</p>
+</div>

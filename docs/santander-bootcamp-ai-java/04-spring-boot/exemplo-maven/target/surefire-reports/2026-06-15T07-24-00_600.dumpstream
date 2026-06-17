@@ -1,0 +1,5 @@
+# Created at 2026-06-15T07:24:09.832
+Boot Manifest-JAR contains absolute paths in classpath 'D:\TOSHIBA320GB\wamp\www\gos\SantanderBootcamp\santander-bootcamp-ai-java\04-spring-boot\exemplo-maven\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
